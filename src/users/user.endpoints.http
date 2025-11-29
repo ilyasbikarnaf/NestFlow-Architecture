@@ -1,0 +1,28 @@
+@url=http://localhost:3000
+
+### Get Request
+GET {{url}}
+
+### Get User
+GET {{url}}/users
+
+### create user
+POST {{url}}/users
+Content-Type: application/json
+
+{
+  "firstName": "Ilyas",
+  "lastName": "Bikarnaf",
+  "email": "ilyas.bikarnaf@gmail.com",
+  "password": "Password123#"
+}
+
+
+### Patch Request
+PATCH {{url}}/users
+Content-Type: application/json
+{
+  "firstName": "test",
+  "lastName": "test",
+  "email": "haha@alsjdf.fff"
+}
