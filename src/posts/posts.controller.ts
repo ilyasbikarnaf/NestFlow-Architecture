@@ -13,10 +13,14 @@ import { PostsService } from './providers/posts.service';
 import { CreatePostDto } from 'src/posts/dtos/create-post.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { PatchPostDto } from './dtos/patch-post.dto';
+import { UsersService } from 'src/users/providers/users.service';
 
 @Controller('posts')
 export class PostsController {
-  constructor(private readonly postsService: PostsService) {}
+  constructor(
+    private readonly postsService: PostsService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @Get()
   getAllPosts() {
