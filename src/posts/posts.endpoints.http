@@ -9,14 +9,19 @@ Content-Type: application/json
 {
   "title": "test title",
   "postType": "post",
-  "slug": "testtit3le",
+  "slug": "test-post-1",
   "status": "draft",
   "content": "test content",
   "schema": "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Person\"\n}",
   "featuredImageUrl":"http://localhost.com/images/image1.jpg",
   "publishOn": "2024-03-16T07:46:32+0000",
-  "tags": ["nestjs", "typescript"]
-
+  "tags": ["nestjs", "typescript"],
+  "metaOptions": {
+      "metaValue": {
+        "sidebard": "enabled",
+        "isFooterActive": true
+      }
+  }
 }
 
 
@@ -38,6 +43,9 @@ Content-Type: application/json
 
 ### get all posts
 GET {{url}}
+
+### get post
+GET {{url}}/1
 
 ### delete post by id
 DELETE {{url}}?id=3

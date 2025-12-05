@@ -48,8 +48,9 @@ export class Post {
   @Column({ type: 'timestamp', nullable: true })
   publishOn?: Date;
 
-  @OneToOne(() => MetaOption, { cascade: true })
-  @JoinColumn()
+  @OneToOne(() => MetaOption, (metaOptions) => metaOptions.post, {
+    cascade: true,
+  })
   metaOptions?: MetaOption | null;
 
   tags?: string[];

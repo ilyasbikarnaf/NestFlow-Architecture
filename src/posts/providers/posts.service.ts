@@ -29,6 +29,17 @@ export class PostsService {
     return posts;
   }
 
+  public async findPost(id: number) {
+    const post = await this.postsRepository.findOne({
+      where: { id },
+      relations: { metaOptions: true },
+    });
+
+    console.log(post?.metaOptions?.metaValue);
+
+    return post;
+  }
+
   async createPost(createPostDto: CreatePostDto) {
     const post = this.postsRepository.create(createPostDto);
 
@@ -36,22 +47,12 @@ export class PostsService {
   }
 
   async deletePost(id: number) {
-    // find post
-    const post = await this.postsRepository.findOneBy({ id });
+    const post = await this.postsRepository.delete(id);
 
-    if (!post) {
-      return { deleted: false, error: 'no post exists' };
+    if (post.affected) {
+      return { deleted: true, id };
     }
-    // delete the post first
-    await this.postsRepository.delete(id);
-
-    // delete metaoptions of the post
-    if (post.metaOptions) {
-      await this.metaOptionsRespository.delete(post.metaOptions.id);
-    }
-    // confirmation message
-    await this.postsRepository.delete(id);
-    return { deleted: true, id: post.id };
+    return { deleted: false };
   }
 
   patchPost(patchPostDto: PatchPostDto) {

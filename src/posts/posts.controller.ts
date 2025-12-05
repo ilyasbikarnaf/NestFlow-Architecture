@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   ParseIntPipe,
   Patch,
   Post,
@@ -18,8 +19,13 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Get()
-  getPost() {
+  getAllPosts() {
     return this.postsService.findAll();
+  }
+
+  @Get('/:id')
+  getPost(@Param('id', ParseIntPipe) id: number) {
+    return this.postsService.findPost(id);
   }
 
   @ApiOperation({ summary: 'Creates a new blog post' })

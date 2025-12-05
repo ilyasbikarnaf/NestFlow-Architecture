@@ -1,7 +1,7 @@
-import { IsJSON, IsNotEmpty } from 'class-validator';
+import { IsJSON, IsNotEmpty, IsObject } from 'class-validator';
 
 export class CreatePostMetaOptionsDto {
   @IsNotEmpty()
-  @IsJSON()
-  metaValue: string;
+  @IsObject()
+  metaValue: Record<string, any>;
 }
