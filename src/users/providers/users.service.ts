@@ -17,14 +17,12 @@ export class UsersService {
       email: createUserDto.email,
     });
 
-    // if (existingUser) {
-    //   return 'user already exists';
-    // }
+    if (existingUser) {
+      return 'user already exists';
+    }
 
-    let newUser = this.usersRepository.create(createUserDto);
-    newUser = await this.usersRepository.save(newUser);
-
-    return newUser;
+    const newUser = this.usersRepository.create(createUserDto);
+    return await this.usersRepository.save(newUser);
   }
 
   public findAll(
@@ -38,11 +36,7 @@ export class UsersService {
     ];
   }
 
-  public findUserById(id: string) {
-    return {
-      id,
-      firstName: 'Alice',
-      email: 'alice@doe.com',
-    };
+  public async findUserById(id: number) {
+    return await this.usersRepository.findOneBy({ id });
   }
 }
