@@ -4,10 +4,12 @@ import {
   PrimaryGeneratedColumn,
   OneToOne,
   JoinColumn,
+  ManyToOne,
 } from 'typeorm';
 import { postType } from './enums/postType.enum';
 import { postStatus } from './enums/postStatus.enum';
 import { MetaOption } from 'src/meta-options/metaOption.entity';
+import { User } from 'src/users/user.entity';
 
 @Entity()
 export class Post {
@@ -54,4 +56,7 @@ export class Post {
   metaOptions?: MetaOption | null;
 
   tags?: string[];
+
+  @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
+  author: User;
 }
