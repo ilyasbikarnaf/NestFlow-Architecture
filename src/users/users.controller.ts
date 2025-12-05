@@ -1,20 +1,58 @@
-import { Controller, Get, Post, Param, Body, Patch } from '@nestjs/common';
-import { CreateUserDto } from 'src/dtos/create-user.dto';
-import { GetUserParamDto } from 'src/dtos/get-user-param.dto';
-import { PatchUserDto } from 'src/dtos/patch-user.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Body,
+  Patch,
+  Query,
+  DefaultValuePipe,
+  ParseIntPipe,
+} from '@nestjs/common';
+import { CreateUserDto } from 'src/users/dtos/create-user.dto';
+import { GetUserParamDto } from 'src/users/dtos/get-user-param.dto';
+import { PatchUserDto } from 'src/users/dtos/patch-user.dto';
+import { UsersService } from './providers/users.service';
+import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
   @Get('{/:id}')
-  public getUsers(@Param() getUsersParamDto: GetUserParamDto) {
-    console.log(getUsersParamDto);
-    return `You sent a request to get users`;
+  @ApiOperation({
+    summary: 'returns a list of registered users on the application',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Users fetched succesfully based on the query',
+  })
+  @ApiQuery({
+    name: 'limit',
+    description: 'The number of entries returned per query',
+    type: 'number',
+    example: 10,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'page',
+    description:
+      'the position of the page number that you want the api to return',
+    type: 'number',
+    example: '4',
+    required: false,
+  })
+  public getUsers(
+    @Param() getUsersParamDto: GetUserParamDto,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+  ) {
+    return this.usersService.findAll(getUsersParamDto, limit, page);
   }
 
   @Post()
   createUsers(@Body() createUserDto: CreateUserDto) {
-    console.log(createUserDto);
-    return `You setnt sent a post request to users endpoint`;
+    return this.usersService.createUser(createUserDto);
   }
 
   @Patch()
