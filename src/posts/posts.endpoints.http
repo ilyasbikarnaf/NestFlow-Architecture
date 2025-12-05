@@ -9,7 +9,7 @@ Content-Type: application/json
 {
   "title": "test title",
   "postType": "post",
-  "slug": "test-post-1",
+  "slug": "test-post-2",
   "status": "draft",
   "content": "test content",
   "schema": "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Person\"\n}",
@@ -21,7 +21,8 @@ Content-Type: application/json
         "sidebard": "enabled",
         "isFooterActive": true
       }
-  }
+  },
+  "authorId": 1
 }
 
 
@@ -45,7 +46,7 @@ Content-Type: application/json
 GET {{url}}
 
 ### get post
-GET {{url}}/1
+GET {{url}}/4
 
 ### delete post by id
 DELETE {{url}}?id=3
