@@ -23,7 +23,10 @@ export class PostsService {
     // const user = this.usersService.findUserById(userId);
 
     const posts = await this.postsRepository.find({
-      relations: { metaOptions: true },
+      relations: {
+        metaOptions: true,
+        author: true,
+      },
     });
 
     return posts;
@@ -32,16 +35,25 @@ export class PostsService {
   public async findPost(id: number) {
     const post = await this.postsRepository.findOne({
       where: { id },
-      relations: { metaOptions: true },
+      relations: {
+        metaOptions: true,
+        author: true,
+      },
     });
 
-    console.log(post?.metaOptions?.metaValue);
+    // console.log(post?.metaOptions?.metaValue);
 
     return post;
   }
 
   async createPost(createPostDto: CreatePostDto) {
-    const post = this.postsRepository.create(createPostDto);
+    const author = await this.usersService.findUserById(createPostDto.authorId);
+
+    if (!author) {
+      return;
+    }
+
+    const post = this.postsRepository.create({ ...createPostDto, author });
 
     return await this.postsRepository.save(post);
   }
