@@ -1,0 +1,43 @@
+@url = http://localhost:3000/posts
+
+### get posts
+GET {{url}}/1
+
+### create post
+POST {{url}}
+Content-Type: application/json
+{
+  "title": "test title",
+  "postType": "post",
+  "slug": "testtit3le",
+  "status": "draft",
+  "content": "test content",
+  "schema": "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Person\"\n}",
+  "featuredImageUrl":"http://localhost.com/images/image1.jpg",
+  "publishOn": "2024-03-16T07:46:32+0000",
+  "tags": ["nestjs", "typescript"]
+
+}
+
+
+### patch post
+PATCH {{url}}
+Content-Type: application/json
+{
+  "id" : "2f ",
+  "title": "test title",
+  "publishOn": "2024-03-16T07:46:32+0000",
+  "tags": ["nestjs", "typescript"],
+  "metaOptions": [
+    {
+      "key": "test key",
+      "value": "test value"
+    }
+  ]
+}
+
+### get all posts
+GET {{url}}
+
+### delete post by id
+DELETE {{url}}?id=3
