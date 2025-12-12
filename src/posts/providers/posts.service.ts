@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  RequestTimeoutException,
+} from '@nestjs/common';
 import { CreatePostDto } from 'src/posts/dtos/create-post.dto';
 import { UsersService } from 'src/users/providers/users.service';
 import { PatchPostDto } from '../dtos/patch-post.dto';
@@ -6,6 +10,11 @@ import { Post } from '../post.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MetaOption } from 'src/meta-options/metaOption.entity';
+import { TagsService } from 'src/tags/tags.service';
+import { Tag } from 'src/tags/tag.entity';
+import { GetPostsDto } from '../dtos/get-posts.dto';
+import { PaginationProvider } from 'src/common/pagination/providers/pagination.provider';
+import { Paginated } from 'src/common/pagination/interfaces/paginated.interface';
 
 @Injectable()
 export class PostsService {
@@ -17,17 +26,29 @@ export class PostsService {
 
     @InjectRepository(MetaOption)
     private readonly metaOptionsRespository: Repository<MetaOption>,
+
+    private readonly tagsService: TagsService,
+
+    private readonly paginationProvider: PaginationProvider,
   ) {}
 
-  public async findAll() {
-    // const user = this.usersService.findUserById(userId);
-
-    const posts = await this.postsRepository.find({
-      relations: {
-        metaOptions: true,
-        author: true,
+  public async findAll(postsQuery: GetPostsDto): Promise<Paginated<Post>> {
+    // console.log(`userId: ${userId}`);
+    // const user = userId ? await this.usersService.findUserById(userId);
+    const posts = await this.paginationProvider.paginateQuery(
+      {
+        limit: postsQuery.limit,
+        page: postsQuery.page,
       },
-    });
+      this.postsRepository,
+      {
+        relations: {
+          metaOptions: true,
+          author: true,
+          tags: true,
+        },
+      },
+    );
 
     return posts;
   }
@@ -41,19 +62,24 @@ export class PostsService {
       },
     });
 
-    // console.log(post?.metaOptions?.metaValue);
-
     return post;
   }
 
   async createPost(createPostDto: CreatePostDto) {
     const author = await this.usersService.findUserById(createPostDto.authorId);
+    const tags = createPostDto.tags
+      ? await this.tagsService.findMultipleTags(createPostDto.tags)
+      : undefined;
 
     if (!author) {
       return;
     }
 
-    const post = this.postsRepository.create({ ...createPostDto, author });
+    const post = this.postsRepository.create({
+      ...createPostDto,
+      author,
+      tags,
+    });
 
     return await this.postsRepository.save(post);
   }
@@ -67,7 +93,62 @@ export class PostsService {
     return { deleted: false };
   }
 
-  patchPost(patchPostDto: PatchPostDto) {
-    console.log(patchPostDto);
+  async patch(patchPostDto: PatchPostDto) {
+    let post: Post | null;
+    let tags: Tag[] | null = [];
+
+    if (patchPostDto.tags) {
+      try {
+        tags = await this.tagsService.findMultipleTags(patchPostDto.tags);
+      } catch {
+        throw new RequestTimeoutException(
+          'Unable to process your request at the moment, please try again later',
+        );
+      }
+    }
+
+    if (!tags || tags.length !== patchPostDto.tags?.length) {
+      throw new BadRequestException(
+        'Please check your tag Ids and ensure they are correct',
+      );
+    }
+
+    try {
+      post = await this.postsRepository.findOneBy({ id: patchPostDto.id });
+    } catch {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment, please try again later',
+        { description: 'Error connecting to the database' },
+      );
+    }
+
+    if (!post) {
+      throw new BadRequestException('The post Id does not exist');
+    }
+
+    // Update simple properties
+    if (patchPostDto.title !== undefined) post.title = patchPostDto.title;
+    if (patchPostDto.content !== undefined) post.content = patchPostDto.content;
+    if (patchPostDto.status !== undefined) post.status = patchPostDto.status;
+    if (patchPostDto.postType !== undefined)
+      post.postType = patchPostDto.postType;
+    if (patchPostDto.slug !== undefined) post.slug = patchPostDto.slug;
+    if (patchPostDto.featuredImageUrl !== undefined)
+      post.featuredImageUrl = patchPostDto.featuredImageUrl;
+    if (patchPostDto.publishOn !== undefined)
+      post.publishOn = patchPostDto.publishOn;
+
+    post.tags = tags;
+
+    try {
+      await this.postsRepository.save(post);
+    } catch {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment, please try again later',
+        { description: 'Error connecting to the database' },
+      );
+    }
+
+    return post;
   }
 }

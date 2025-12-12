@@ -14,6 +14,7 @@ import { CreatePostDto } from 'src/posts/dtos/create-post.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { PatchPostDto } from './dtos/patch-post.dto';
 import { UsersService } from 'src/users/providers/users.service';
+import { GetPostsDto } from './dtos/get-posts.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -22,9 +23,10 @@ export class PostsController {
     private readonly usersService: UsersService,
   ) {}
 
-  @Get()
-  getAllPosts() {
-    return this.postsService.findAll();
+  @Get('')
+  getAllPosts(@Query() postsQuery: GetPostsDto) {
+    console.log(postsQuery);
+    return this.postsService.findAll(postsQuery);
   }
 
   @Get('/:id')
@@ -44,8 +46,8 @@ export class PostsController {
   }
 
   @Patch()
-  patchPost(@Body() patchPostDto: PatchPostDto) {
-    this.postsService.patchPost(patchPostDto);
+  async patchPost(@Body() patchPostDto: PatchPostDto) {
+    return await this.postsService.patch(patchPostDto);
   }
 
   @Delete()
