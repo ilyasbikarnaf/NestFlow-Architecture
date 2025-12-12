@@ -1,3 +1,4 @@
+@startDate = {{$datetime iso8601}}
 @url = http://localhost:3000/posts
 
 ### get posts
@@ -9,20 +10,20 @@ Content-Type: application/json
 {
   "title": "test title",
   "postType": "post",
-  "slug": "test-post-2",
+  "slug": "test-post-6",
   "status": "draft",
   "content": "test content",
   "schema": "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Person\"\n}",
   "featuredImageUrl":"http://localhost.com/images/image1.jpg",
   "publishOn": "2024-03-16T07:46:32+0000",
-  "tags": ["nestjs", "typescript"],
+  "tags": [1,2],
   "metaOptions": {
       "metaValue": {
         "sidebard": "enabled",
         "isFooterActive": true
       }
   },
-  "authorId": 1
+  "authorId": 2
 }
 
 
@@ -30,23 +31,18 @@ Content-Type: application/json
 PATCH {{url}}
 Content-Type: application/json
 {
-  "id" : "2f ",
-  "title": "test title",
-  "publishOn": "2024-03-16T07:46:32+0000",
-  "tags": ["nestjs", "typescript"],
-  "metaOptions": [
-    {
-      "key": "test key",
-      "value": "test value"
-    }
-  ]
+  "id" : "12",
+  "tags": [2,3]
 }
 
 ### get all posts
 GET {{url}}
 
 ### get post
-GET {{url}}/4
+GET {{url}}/8
 
 ### delete post by id
-DELETE {{url}}?id=3
+DELETE {{url}}?id=4
+
+### get posts with query
+GET {{url}}?limit=2&page=2

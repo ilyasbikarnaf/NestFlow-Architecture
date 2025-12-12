@@ -3,13 +3,15 @@ import {
   Column,
   PrimaryGeneratedColumn,
   OneToOne,
-  JoinColumn,
   ManyToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { postType } from './enums/postType.enum';
 import { postStatus } from './enums/postStatus.enum';
 import { MetaOption } from 'src/meta-options/metaOption.entity';
 import { User } from 'src/users/user.entity';
+import { Tag } from 'src/tags/tag.entity';
 
 @Entity()
 export class Post {
@@ -55,8 +57,10 @@ export class Post {
   })
   metaOptions?: MetaOption | null;
 
-  tags?: string[];
-
   @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
   author: User;
+
+  @ManyToMany(() => Tag, (tag) => tag.posts)
+  @JoinTable()
+  tags?: Tag[];
 }
