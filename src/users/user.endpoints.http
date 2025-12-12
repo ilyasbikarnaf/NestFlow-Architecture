@@ -1,13 +1,11 @@
-@url=http://localhost:3000
+@url=http://localhost:3000/users
 
-### Get Request
-GET {{url}}
 
-### Get User
-GET {{url}}/users
+### Get Users
+GET {{url}}/
 
 ### create user
-POST {{url}}/users
+POST {{url}}
 Content-Type: application/json
 
 {
@@ -18,8 +16,29 @@ Content-Type: application/json
 }
 
 
+### create users
+POST {{url}}/create-many
+Content-Type: application/json
+
+{
+  "users": [{
+  "firstName": "Ilyas",
+  "lastName": "Bikarnaf",
+  "email": "alksjdf2aslkdfj@alskdjf.com",
+  "password": "Password123#"
+}, {
+  "firstName": "Ilyas",
+  "lastName": "Bikarnaf",
+  "email": "alksjdlkdfj@alskdjf.com",
+  "password": "Password123#"
+}]
+}
+
+
+
+
 ### Patch Request
-PATCH {{url}}/users
+PATCH {{url}}
 Content-Type: application/json
 {
   "firstName": "test",

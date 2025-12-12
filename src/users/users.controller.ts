@@ -14,6 +14,7 @@ import { GetUserParamDto } from 'src/users/dtos/get-user-param.dto';
 import { PatchUserDto } from 'src/users/dtos/patch-user.dto';
 import { UsersService } from './providers/users.service';
 import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { CreateManyUsersDto } from './dtos/create-many-users.dto';
 
 @Controller('users')
 export class UsersController {
@@ -42,17 +43,21 @@ export class UsersController {
     example: '4',
     required: false,
   })
-  public getUsers(
-    @Param() getUsersParamDto: GetUserParamDto,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-  ) {
-    return this.usersService.findAll(getUsersParamDto, limit, page);
+  public getUsers() {
+    // @Param() getUsersParamDto: GetUserParamDto,
+    // @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    // @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    return this.usersService.findAll();
   }
 
   @Post()
-  createUsers(@Body() createUserDto: CreateUserDto) {
+  createUser(@Body() createUserDto: CreateUserDto) {
     return this.usersService.createUser(createUserDto);
+  }
+
+  @Post('create-many')
+  createManyUsers(@Body() createManyUsersDto: CreateManyUsersDto) {
+    return this.usersService.createManyUsers(createManyUsersDto);
   }
 
   @Patch()
