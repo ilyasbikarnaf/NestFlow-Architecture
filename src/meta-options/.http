@@ -1,8 +1,0 @@
-@url = http://localhost:3000
-
-
-POST {{url}}/meta-options
-Content-Type: application/json
-{
-    "metaValue": "[123]"
-}
