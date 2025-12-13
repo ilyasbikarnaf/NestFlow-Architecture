@@ -1,16 +1,20 @@
 import {
   BadRequestException,
+  forwardRef,
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
   RequestTimeoutException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from '../user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from '../dtos/create-user.dto';
-import { UsersCreateManyProvider } from './users-create-many';
+import { UsersCreateManyProvider } from './users-create-many.provider';
 import { CreateManyUsersDto } from '../dtos/create-many-users.dto';
+import { HashingProvider } from 'src/auth/providers/hashing.provider';
 
 @Injectable()
 export class UsersService {
@@ -18,6 +22,8 @@ export class UsersService {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     private readonly usersCreateManyProvider: UsersCreateManyProvider,
+    @Inject(forwardRef(() => HashingProvider))
+    private readonly hashingProvider: HashingProvider,
   ) {}
 
   public async createUser(createUserDto: CreateUserDto) {
@@ -26,7 +32,7 @@ export class UsersService {
       existingUser = await this.usersRepository.findOneBy({
         email: createUserDto.email,
       });
-    } catch (error) {
+    } catch {
       throw new RequestTimeoutException(
         'Unable to process your request at the moment, please try again later',
         { description: 'Error connecting to the database' },
@@ -39,11 +45,14 @@ export class UsersService {
       );
     }
 
-    let newUser = this.usersRepository.create(createUserDto);
+    let newUser = this.usersRepository.create({
+      ...createUserDto,
+      password: await this.hashingProvider.hashPassword(createUserDto.password),
+    });
 
     try {
       newUser = await this.usersRepository.save(newUser);
-    } catch (error) {
+    } catch {
       throw new RequestTimeoutException(
         'Unable to process your request at the moment, please try again later',
         { description: 'Error connecting to the database' },
@@ -84,6 +93,25 @@ export class UsersService {
 
     if (!user) {
       throw new BadRequestException('The user id does not exist');
+    }
+
+    return user;
+  }
+
+  public async findUserByEmail(email: string) {
+    let user: User | null;
+
+    try {
+      user = await this.usersRepository.findOneBy({ email });
+    } catch {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment, please try again later',
+        { description: 'Error connecting to the database' },
+      );
+    }
+
+    if (!user) {
+      throw new UnauthorizedException('User does not exist');
     }
 
     return user;
