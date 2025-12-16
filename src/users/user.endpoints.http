@@ -2,7 +2,10 @@
 
 
 ### Get Users
-GET {{url}}/
+GET {{url}}/3
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwiZW1haWwiOiJpbHlhcy5iaWthcm5hZjFAZ21haWwuY29tIiwiaWF0IjoxNzY1ODkwMjM4LCJleHAiOjE3NjU4OTM4MzgsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.5mmzuvMoFluLJWA1c5GBVskOUqYBfVzerz9BEQdkB68
+
+
 
 ### create user
 POST {{url}}
@@ -19,6 +22,7 @@ Content-Type: application/json
 ### create users
 POST {{url}}/create-many
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwiZW1haWwiOiJpbHlhcy5iaWthcm5hZjFAZ21haWwuY29tIiwiaWF0IjoxNzY1NzE4OTU3LCJleHAiOjE3NjU3MjI1NTcsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.1hdUD4kSTXmnBcA3898FBiOjHMGN87wDuKHfAdadr5I
 
 {
   "users": [{

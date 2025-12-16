@@ -8,6 +8,7 @@ import {
   Query,
   DefaultValuePipe,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 import { GetUserParamDto } from 'src/users/dtos/get-user-param.dto';
@@ -15,12 +16,19 @@ import { PatchUserDto } from 'src/users/dtos/patch-user.dto';
 import { UsersService } from './providers/users.service';
 import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { CreateManyUsersDto } from './dtos/create-many-users.dto';
+import { Auth } from 'src/auth/decorators/auth.decorator';
+import { AuthType } from 'src/auth/enum/auth-type.enum';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get('{/:id}')
+  @Get('/:id')
+  // @Auth(AuthType.Bearer  )
+  getUser(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.findUserById(id);
+  }
+
   @ApiOperation({
     summary: 'returns a list of registered users on the application',
   })
@@ -51,6 +59,7 @@ export class UsersController {
   }
 
   @Post()
+  @Auth(AuthType.None)
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.usersService.createUser(createUserDto);
   }
