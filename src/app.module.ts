@@ -11,6 +11,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PaginationModule } from './common/pagination/pagination.module';
 import databaseConfig from './config/database.config';
 import appConfig from './config/app.config';
+import { APP_GUARD } from '@nestjs/core';
+import environmentValidation from './config/environment.validation';
+import { AuthenticationGuard } from './auth/guards/authentication.guard';
 
 const ENV = process.env.NODE_ENV;
 
@@ -23,6 +26,7 @@ const ENV = process.env.NODE_ENV;
       isGlobal: true,
       load: [databaseConfig, appConfig],
       envFilePath: !ENV ? '.env' : `.env.${ENV}`,
+      validationSchema: environmentValidation,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -45,6 +49,12 @@ const ENV = process.env.NODE_ENV;
     PaginationModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthenticationGuard,
+    },
+  ],
 })
 export class AppModule {}
