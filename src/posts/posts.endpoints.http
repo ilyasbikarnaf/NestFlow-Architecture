@@ -7,23 +7,23 @@ GET {{url}}/1
 ### create post
 POST {{url}}
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwiZW1haWwiOiJpbHlhcy5iaWthcm5hZjFAZ21haWwuY29tIiwiaWF0IjoxNzY1ODk4NDU1LCJleHAiOjE3NjU5MDIwNTUsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.g6Zez9Nwc58eY1P2xrJSVoVQMgaq4NrCYBANgped64w
 {
   "title": "test title",
   "postType": "post",
-  "slug": "test-post-6",
+  "slug": "test-post-9",
   "status": "draft",
   "content": "test content",
   "schema": "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Person\"\n}",
   "featuredImageUrl":"http://localhost.com/images/image1.jpg",
-  "publishOn": "2024-03-16T07:46:32+0000",
-  "tags": [1,2],
+  "publishOn": "2026-03-16T07:46:32+00:00",
+  "tags": [4,5],
   "metaOptions": {
       "metaValue": {
         "sidebard": "enabled",
         "isFooterActive": true
       }
-  },
-  "authorId": 2
+  }
 }
 
 

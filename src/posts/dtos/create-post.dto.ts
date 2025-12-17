@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsDate,
   IsEnum,
   IsInt,
   IsISO8601,
@@ -84,7 +85,7 @@ export class CreatePostDto {
     description: 'The date on which the blog post is published',
     example: '2024-03-16T07:46:32+0000',
   })
-  @IsISO8601()
+  @IsDate()
   @IsOptional()
   publishOn?: Date;
 
@@ -115,9 +116,4 @@ export class CreatePostDto {
   @ValidateNested({ each: true })
   @Type(() => CreatePostMetaOptionsDto)
   metaOptions?: CreatePostMetaOptionsDto | null;
-
-  @ApiProperty({ type: 'number', example: 1, required: true })
-  @IsNotEmpty()
-  @IsInt()
-  authorId: number;
 }

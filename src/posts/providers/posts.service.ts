@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   RequestTimeoutException,
 } from '@nestjs/common';
@@ -15,6 +16,8 @@ import { Tag } from 'src/tags/tag.entity';
 import { GetPostsDto } from '../dtos/get-posts.dto';
 import { PaginationProvider } from 'src/common/pagination/providers/pagination.provider';
 import { Paginated } from 'src/common/pagination/interfaces/paginated.interface';
+import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
+import { User } from 'src/users/user.entity';
 
 @Injectable()
 export class PostsService {
@@ -65,14 +68,26 @@ export class PostsService {
     return post;
   }
 
-  async createPost(createPostDto: CreatePostDto) {
-    const author = await this.usersService.findUserById(createPostDto.authorId);
-    const tags = createPostDto.tags
-      ? await this.tagsService.findMultipleTags(createPostDto.tags)
-      : undefined;
+  async createPost(createPostDto: CreatePostDto, user: ActiveUserData) {
+    let author: undefined | User = undefined;
+    let tags: undefined | Tag[] = undefined;
 
-    if (!author) {
-      return;
+    try {
+      author = await this.usersService.findUserById(user.sub);
+
+      tags = createPostDto.tags
+        ? await this.tagsService.findMultipleTags(createPostDto.tags)
+        : undefined;
+    } catch (error) {
+      throw new ConflictException(error);
+    }
+
+    if (
+      tags &&
+      createPostDto.tags &&
+      tags.length !== createPostDto.tags.length
+    ) {
+      throw new BadRequestException('Please check your tag Ids');
     }
 
     const post = this.postsRepository.create({
@@ -81,7 +96,13 @@ export class PostsService {
       tags,
     });
 
-    return await this.postsRepository.save(post);
+    try {
+      return await this.postsRepository.save(post);
+    } catch {
+      throw new ConflictException('failed to save the post', {
+        description: 'Ensure post slug is unique and not a duplicate',
+      });
+    }
   }
 
   async deletePost(id: number) {

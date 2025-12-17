@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
 } from '@nestjs/common';
 import { PostsService } from './providers/posts.service';
 import { CreatePostDto } from 'src/posts/dtos/create-post.dto';
@@ -15,6 +16,8 @@ import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { PatchPostDto } from './dtos/patch-post.dto';
 import { UsersService } from 'src/users/providers/users.service';
 import { GetPostsDto } from './dtos/get-posts.dto';
+import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
+import { type ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
 
 @Controller('posts')
 export class PostsController {
@@ -41,8 +44,11 @@ export class PostsController {
       'You get a 201 response when your post was created succesfully',
   })
   @Post()
-  createPost(@Body() createPostDto: CreatePostDto) {
-    return this.postsService.createPost(createPostDto);
+  createPost(
+    @Body() createPostDto: CreatePostDto,
+    @ActiveUser() user: ActiveUserData,
+  ) {
+    return this.postsService.createPost(createPostDto, user);
   }
 
   @Patch()
