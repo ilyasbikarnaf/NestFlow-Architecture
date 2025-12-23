@@ -3,7 +3,7 @@
 
 ### Get Users
 GET {{url}}/3
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwiZW1haWwiOiJpbHlhcy5iaWthcm5hZjFAZ21haWwuY29tIiwiaWF0IjoxNzY1ODkwMjM4LCJleHAiOjE3NjU4OTM4MzgsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.5mmzuvMoFluLJWA1c5GBVskOUqYBfVzerz9BEQdkB68
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwiZW1haWwiOiJpbHlhcy5iaWthcm5hZjFAZ21haWwuY29tIiwiaWF0IjoxNzY2MTY0NDU4LCJleHAiOjE3NjYxNjgwNTgsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.Tqbn82BMt_1GmZtNZlctzAP9sR2pE6pIwUoIDVIyepQ
 
 
 
@@ -14,7 +14,7 @@ Content-Type: application/json
 {
   "firstName": "Ilyas",
   "lastName": "Bikarnaf",
-  "email": "ilyas.bikarnaf1@gmail.com",
+  "email": "ilyas.bikarnaf4@gmail.com",
   "password": "Password123#"
 }
 
