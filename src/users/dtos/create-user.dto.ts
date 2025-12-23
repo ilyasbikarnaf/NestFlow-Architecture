@@ -42,4 +42,8 @@ export class CreateUserDto {
   @IsEmail()
   @MaxLength(96)
   email: string;
+
+  @IsString()
+  @IsOptional()
+  googleId?: string;
 }
