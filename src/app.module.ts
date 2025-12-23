@@ -11,9 +11,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PaginationModule } from './common/pagination/pagination.module';
 import databaseConfig from './config/database.config';
 import appConfig from './config/app.config';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import environmentValidation from './config/environment.validation';
 import { AuthenticationGuard } from './auth/guards/authentication.guard';
+import { DataResponseInterceptor } from './common/interceptors/data-response/data-response.interceptor';
+import { UploadsModule } from './uploads/uploads.module';
 
 const ENV = process.env.NODE_ENV;
 
@@ -47,6 +49,7 @@ const ENV = process.env.NODE_ENV;
     TagsModule,
     MetaOptionsModule,
     PaginationModule,
+    UploadsModule,
   ],
   controllers: [AppController],
   providers: [
@@ -54,6 +57,10 @@ const ENV = process.env.NODE_ENV;
     {
       provide: APP_GUARD,
       useClass: AuthenticationGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: DataResponseInterceptor,
     },
   ],
 })
