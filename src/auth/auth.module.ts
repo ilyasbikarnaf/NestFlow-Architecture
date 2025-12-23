@@ -8,9 +8,13 @@ import { ConfigModule } from '@nestjs/config';
 import jwtConfig from './config/jwt.config';
 import { JwtModule } from '@nestjs/jwt';
 import { AccessTokenGuard } from './guards/access-token.guard';
+import { GenerateTokensProvider } from './providers/generate-tokens';
+import { RefreshTokensProvider } from './providers/refresh-tokens.provider';
+import { GoogleAuthenticationController } from './social/google-authentication.controller';
+import { GoogleAuthenticationService } from './social/providers/google-authentication.service';
 
 @Module({
-  controllers: [AuthController],
+  controllers: [AuthController, GoogleAuthenticationController],
   providers: [
     AccessTokenGuard,
     AuthService,
@@ -18,6 +22,9 @@ import { AccessTokenGuard } from './guards/access-token.guard';
       provide: HashingProvider,
       useClass: BcryptProvider,
     },
+    GenerateTokensProvider,
+    RefreshTokensProvider,
+    GoogleAuthenticationService,
   ],
   imports: [
     forwardRef(() => UsersModule),

@@ -8,10 +8,9 @@ import {
 import { UsersService } from 'src/users/providers/users.service';
 import { SignInDto } from '../dtos/sign-in.dto';
 import { HashingProvider } from './hashing.provider';
-import { JwtService } from '@nestjs/jwt';
-import jwtConfig from '../config/jwt.config';
-import { type ConfigType } from '@nestjs/config';
-import { ActiveUserData } from '../interfaces/active-user-data.interface';
+import { GenerateTokensProvider } from './generate-tokens';
+import { RefreshTokensProvider } from './refresh-tokens.provider';
+import { RefreshTokenDto } from '../dtos/refresh-token';
 
 @Injectable()
 export class AuthService {
@@ -21,21 +20,17 @@ export class AuthService {
 
     private readonly hashingProvider: HashingProvider,
 
-    private jwtService: JwtService,
-
-    @Inject(jwtConfig.KEY)
-    private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
+    private readonly generateTokensProvider: GenerateTokensProvider,
+    private readonly refreshTokensProvider: RefreshTokensProvider,
   ) {}
-
-  // public login(email: string, password: string, id: number) {
-  //   const user = this.usersService.findUserById(id);
-
-  //   return 'SAMPLE_TOKEN';
-  // }
 
   public async signIn(signInDto: SignInDto) {
     let isPasswordCorrect: boolean = false;
     const user = await this.usersService.findUserByEmail(signInDto.email);
+
+    if (!user.password) {
+      throw new UnauthorizedException('No password provided');
+    }
 
     try {
       isPasswordCorrect = await this.hashingProvider.comparePassword(
@@ -52,23 +47,13 @@ export class AuthService {
       throw new UnauthorizedException('Incorrect Password');
     }
 
-    const accessToken = await this.jwtService.signAsync(
-      {
-        sub: user.id,
-        email: user.email,
-      } as ActiveUserData,
-      {
-        audience: this.jwtConfiguration.audience,
-        issuer: this.jwtConfiguration.issuer,
-        secret: this.jwtConfiguration.secret,
-        expiresIn: this.jwtConfiguration.acessTokenTtl,
-      },
-    );
+    const { accessToken, refreshToken } =
+      await this.generateTokensProvider.generateTokens(user);
 
-    return { accessToken };
+    return { accessToken, refreshToken };
   }
 
-  isAuth() {
-    return true;
+  async refreshToken(refreshTokenDto: RefreshTokenDto) {
+    return this.refreshTokensProvider.refreshTokens(refreshTokenDto);
   }
 }
