@@ -17,6 +17,7 @@ import { UsersCreateManyProvider } from './users-create-many.provider';
 import { CreateManyUsersDto } from '../dtos/create-many-users.dto';
 import { HashingProvider } from 'src/auth/providers/hashing.provider';
 import { GoogleUser } from '../interfaces/google-user.interface';
+import { MailService } from 'src/mail/providers/mail.service';
 
 @Injectable()
 export class UsersService {
@@ -26,6 +27,7 @@ export class UsersService {
     private readonly usersCreateManyProvider: UsersCreateManyProvider,
     @Inject(forwardRef(() => HashingProvider))
     private readonly hashingProvider: HashingProvider,
+    private readonly mailService: MailService,
   ) {}
 
   public async createUser(createUserDto: CreateUserDto) {
@@ -60,6 +62,16 @@ export class UsersService {
         { description: 'Error connecting to the database' },
       );
     }
+
+    try {
+      await this.mailService.sendEmail(newUser);
+      console.log('email sent');
+    } catch (err) {
+      console.log('failed to send email');
+      console.log(err);
+      throw new RequestTimeoutException(err);
+    }
+
     return newUser;
   }
 
@@ -86,7 +98,7 @@ export class UsersService {
 
     try {
       user = await this.usersRepository.findOneBy({ id });
-    } catch (error) {
+    } catch {
       throw new RequestTimeoutException(
         'Unable to process your request at the moment, please try again later',
         { description: 'Error connecting to the database' },

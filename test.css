@@ -1,0 +1,39 @@
+.product-slider .slick-track {
+  display: flex !important;
+  align-items: stretch !important;
+}
+
+.product-slider .preview-item.slick-slide {
+  display: flex !important;
+  height: auto !important;
+  float: none !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.product-slider .preview-item .image-desktop {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.thumbnails .slick-track {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.thumbnails .thumbnail-item {
+  float: none !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.thumbnails .thumbnail-item img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
